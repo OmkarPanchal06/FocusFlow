@@ -66,4 +66,25 @@ public class UserDAO {
         tx.commit();
         session.close();
     }
+
+    public List<Object[]> getTopDistractions(int userId) {
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        Query<Object[]> query = session.createQuery(
+            "SELECT d.type, SUM(d.timeLost) FROM Distraction d JOIN d.session s WHERE s.user.id = :uid GROUP BY d.type ORDER BY SUM(d.timeLost) DESC", 
+            Object[].class
+        );
+        query.setParameter("uid", userId);
+        List<Object[]> results = query.list();
+        session.close();
+        return results;
+    }
+
+    public List<User> getLeaderboard() {
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        Query<User> query = session.createQuery("from User u order by u.xp desc", User.class);
+        query.setMaxResults(5);
+        List<User> list = query.list();
+        session.close();
+        return list;
+    }
 }

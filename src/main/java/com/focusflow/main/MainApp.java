@@ -27,7 +27,9 @@ public class MainApp {
             System.out.println("3. View Users");
             System.out.println("4. Calculate Focus & View Reports");
             System.out.println("5. Delete User");
-            System.out.println("6. Exit");
+            System.out.println("6. Top Distraction Analyzer");
+            System.out.println("7. Global Leaderboard");
+            System.out.println("8. Exit");
             System.out.print("Enter choice: ");
 
             int choice = sc.nextInt();
@@ -82,14 +84,20 @@ public class MainApp {
 
                     session.setDistractions(distractions);
                     dao.saveSession(session);
-                    System.out.println("Session successfully recorded!");
+                    
+                    int sessionXp = FocusService.calculateSessionXP(session);
+                    existingUser.setXp(existingUser.getXp() + sessionXp);
+                    FocusService.updateLevelBasedOnXP(existingUser);
+                    dao.save(existingUser);
+
+                    System.out.println("Session successfully recorded! You gained " + sessionXp + " XP. Current Level: " + existingUser.getLevel());
                     break;
 
                 case 3:
                     List<User> users = dao.getAllUsers();
                     System.out.println("\n--- ALL USERS ---");
                     for (User u : users) {
-                        System.out.println("ID: " + u.getId() + " | Name: " + u.getName());
+                        System.out.println("ID: " + u.getId() + " | Name: " + u.getName() + " | Level: " + u.getLevel() + " (XP: " + u.getXp() + ")");
                     }
                     break;
 
@@ -144,6 +152,31 @@ public class MainApp {
                     break;
 
                 case 6:
+                    System.out.print("Enter User ID to analyze distractions: ");
+                    int distId = sc.nextInt();
+                    sc.nextLine();
+                    List<Object[]> topDistractions = dao.getTopDistractions(distId);
+                    if (topDistractions == null || topDistractions.isEmpty()) {
+                        System.out.println("No distractions found for this user.");
+                    } else {
+                        System.out.println("\n--- TOP DISTRACTIONS ---");
+                        for (Object[] row : topDistractions) {
+                            System.out.println("Type: " + row[0] + " | Total Time Lost: " + row[1] + " mins");
+                        }
+                    }
+                    break;
+
+                case 7:
+                    List<User> topUsers = dao.getLeaderboard();
+                    System.out.println("\n--- GLOBAL LEADERBOARD ---");
+                    int rank = 1;
+                    for (User u : topUsers) {
+                        System.out.println("#" + rank + " - " + u.getName() + " | Level " + u.getLevel() + " | XP: " + u.getXp());
+                        rank++;
+                    }
+                    break;
+
+                case 8:
                     System.out.println("Exiting FocusFlow. Goodbye!");
                     System.exit(0);
 

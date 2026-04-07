@@ -12,6 +12,9 @@ public class User {
 
     private String name;
 
+    private int xp = 0;
+    private int level = 1;
+
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<StudySession> sessions;
 
@@ -20,6 +23,12 @@ public class User {
 
     public String getName() { return name; }
     public void setName(String name) { this.name = name; }
+
+    public int getXp() { return xp; }
+    public void setXp(int xp) { this.xp = xp; }
+
+    public int getLevel() { return level; }
+    public void setLevel(int level) { this.level = level; }
 
     public List<StudySession> getSessions() { return sessions; }
     public void setSessions(List<StudySession> sessions) { this.sessions = sessions; }
