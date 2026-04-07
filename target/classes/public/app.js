@@ -7,30 +7,24 @@ document.getElementById('focus-form').addEventListener('submit', async (e) => {
     submitBtn.disabled = true;
 
     try {
-        const payload = {
-            name: document.getElementById('name').value,
-            studyDuration: parseInt(document.getElementById('studyDuration').value),
-            distractionTime: parseInt(document.getElementById('distractionTime').value)
-        };
+        const name = document.getElementById('name').value;
+        const studyDuration = parseInt(document.getElementById('studyDuration').value);
+        const distractionTime = parseInt(document.getElementById('distractionTime').value) || 0;
 
-        const response = await fetch('http://localhost:7070/api/focus', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(payload)
-        });
-
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+        // Perform calculation purely on the frontend (Serverless / Portable!)
+        let score = 0.0;
+        if (studyDuration > 0) {
+            score = studyDuration / (studyDuration + distractionTime);
         }
 
-        const data = await response.json();
-        showResult(data.score);
+        // Add a tiny artificial delay so the animation feels cooler
+        await new Promise(r => setTimeout(r, 600));
+
+        showResult(score);
 
     } catch (error) {
         console.error('Error fetching score:', error);
-        alert('Failed to calculate focus score. Ensure the backend is running!');
+        alert('Failed to calculate focus score.');
     } finally {
         submitBtn.textContent = originalText;
         submitBtn.disabled = false;
@@ -63,14 +57,14 @@ function showResult(score) {
     }, 15);
 
     // Messages
-    if (score >= 0.8) {
-        scoreMsg.textContent = "Outstanding focus! You're in the zone.";
+    if (score > 0.8) {
+        scoreMsg.textContent = "Highly Focused! You're in the zone. 🔥";
         scoreValue.style.color = "#10b981"; // green
-    } else if (score >= 0.5) {
-        scoreMsg.textContent = "Good session. Try minimizing distractions next time.";
+    } else if (score > 0.5) {
+        scoreMsg.textContent = "Moderate session. Try minimizing distractions! 👍";
         scoreValue.style.color = "#f59e0b"; // yellow
     } else {
-        scoreMsg.textContent = "Too many distractions! Keep trying.";
+        scoreMsg.textContent = "Low Focus! Too many distractions. 🚨";
         scoreValue.style.color = "#ef4444"; // red
     }
 }
