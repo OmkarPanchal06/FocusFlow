@@ -13,7 +13,7 @@ document.getElementById('focus-form').addEventListener('submit', async (e) => {
             distractionTime: parseInt(document.getElementById('distractionTime').value)
         };
 
-        const response = await fetch('/api/focus', {
+        const response = await fetch('http://localhost:7070/api/focus', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'

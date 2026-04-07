@@ -1,7 +1,9 @@
 com\focusflow\dao\UserDAO.class
 com\focusflow\model\User.class
-com\focusflow\model\Distraction.class
 com\focusflow\main\FocusService.class
 com\focusflow\main\MainApp.class
 com\focusflow\model\StudySession.class
 com\focusflow\util\HibernateUtil.class
+com\focusflow\main\WebBackendApp$FocusRequest.class
+com\focusflow\model\Distraction.class
+com\focusflow\main\WebBackendApp.class
